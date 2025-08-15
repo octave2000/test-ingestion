@@ -52,7 +52,7 @@ func runDevice(serverAddr, imei string, interval time.Duration) error {
 		return err
 	}
 
-	// Wait for IMEI ACK
+	
 	ack := make([]byte, 1)
 	if _, err := conn.Read(ack); err != nil {
 		return err
@@ -61,18 +61,18 @@ func runDevice(serverAddr, imei string, interval time.Duration) error {
 		return fmt.Errorf("invalid ACK: 0x%x", ack[0])
 	}
 
-	// Send AVL packets forever
+	
 	for {
-		lat := 37.7749 + (rand.Float64()-0.5)/1000 // ± ~0.0005 deg
+		lat := 37.7749 + (rand.Float64()-0.5)/1000 
 		lon := -122.4194 + (rand.Float64()-0.5)/1000
-		packet := buildFakeAVLPacket(lat, lon)
+		packet := buildFakeAVLPackets(lat, lon)
 
 		if _, err := conn.Write(packet); err != nil {
 			return err
 		}
 		log.Printf("[%s] Sent AVL packet (lat=%.6f lon=%.6f)", imei, lat, lon)
 
-		// Wait for record count ACK
+		
 		recAck := make([]byte, 4)
 		if _, err := conn.Read(recAck); err != nil {
 			return err
@@ -84,7 +84,7 @@ func runDevice(serverAddr, imei string, interval time.Duration) error {
 }
 
 
-func buildFakeAVLPacket(lat, lon float64) []byte {
+func buildFakeAVLPackets(lat, lon float64) []byte {
 	var buf bytes.Buffer
 	
 	buf.Write([]byte{0x00, 0x00, 0x00, 0x00})
